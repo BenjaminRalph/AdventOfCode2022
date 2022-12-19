@@ -1035,15 +1035,29 @@ fn main() {
         outputs
     }
 
-    // returns 0 if false, 1 if true for increment purposes
+    
     fn check_if_set_a_contains_set_b(a:[u32;2], b: [u32;2]) -> bool {
         
         (b[0] >= a[0]) && (b[0] <= a[1]) && (b[1] <= a[1])
 
     }
 
+    fn check_if_set_a_overlaps_set_b(a:[u32;2], b: [u32;2]) -> bool {
+        
+        //(b[0] >= a[0]) && (b[0] <= a[1]) && (b[1] <= a[1])
+        //overlaps when either end is between a's ends
+        (b[0]>=a[0] && b[0]<=a[1]) 
+        ||
+        (b[1]>=a[0] && b[1]<=a[1]) 
+
+    }
+
     fn check_if_either_set_contains_other(a:[u32;2], b: [u32;2]) -> bool {
         check_if_set_a_contains_set_b(a, b) || check_if_set_a_contains_set_b(b, a)
+    }
+
+    fn check_if_either_set_overlaps_other(a:[u32;2], b: [u32;2]) -> bool {
+        check_if_set_a_overlaps_set_b(a, b) || check_if_set_a_overlaps_set_b(b, a)
     }
 
     fn tally_sets_containing_other(pairs_list: Vec<[[u32;2];2]>) -> usize{
@@ -1053,19 +1067,36 @@ fn main() {
         }
         total
     }
+
+    fn tally_sets_overlaping_other(pairs_list: Vec<[[u32;2];2]>) -> usize{
+        let mut total: usize = 0;
+        for pair in pairs_list{
+            total = total + check_if_either_set_overlaps_other(pair[0], pair[1]) as usize;
+        }
+        total
+    }
+
     // For every line: -> usize
 
     // // Check if A contains B. If so, increment the count of contained assignments
 
     // // ''       B ''       A ''
 
-    fn get_tally_from_input(input: &str) -> usize{
+    fn get_containing_tally_from_input(input: &str) -> usize{
         let lines = split_lines(input);
         let post_first_split = split_lines_on_comma(lines);
         let post_second_split = split_lines_on_dash(post_first_split);
         tally_sets_containing_other(post_second_split)
     }
 
+    fn get_overlapping_tally_from_input(input: &str) -> usize{
+        let lines = split_lines(input);
+        let post_first_split = split_lines_on_comma(lines);
+        let post_second_split = split_lines_on_dash(post_first_split);
+        tally_sets_overlaping_other(post_second_split)
+    }
+
     // Print count
-    println!("{}", get_tally_from_input(input));
+    println!("{}", get_containing_tally_from_input(input));
+    println!("{}", get_overlapping_tally_from_input(input));
 }
